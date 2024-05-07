@@ -1,0 +1,3 @@
+llama-index==0.10.34
+openai==1.26.0
+pydantic==2.7.1
