@@ -20,6 +20,7 @@ from index_wikipages import create_index
 index = None
 agent = None
 
+
 @cl.on_chat_start
 async def on_chat_start():
     print("on_chat_start")
@@ -28,52 +29,54 @@ async def on_chat_start():
     settings = await cl.ChatSettings(
         [
             Select(
-                id= "MODEL",
-                label= "Choose which model to use.",
+                id="MODEL",
+                label="Choose which model to use.",
                 values=["gpt-3.5-turbo", "gpt-4"],
                 initial_index=0,
             ),
-            
-            TextInput(
-                id="WikiPageRequest", 
-                label="Request Wikipage"
-            ),
+            TextInput(id="WikiPageRequest", label="Request Wikipage"),
         ]
     ).send()
+
 
 def wikisearch_engine(index):
     print("Creating query engine...")
     query_engine = index.as_query_engine(
-        response_mode="compact", 
+        response_mode="compact",
         verbose=True,
         similarity_top_k=10,
     )
     return query_engine
 
+
 def create_react_agent(MODEL):
-    query_engine_tools =[
+    query_engine_tools = [
         QueryEngineTool(
-            query_engine=wikisearch_engine(index), 
-            metadata=ToolMetadata(name="Wikipedia",
-                                  description="Useful for performing searches on Wikipedia pages."
-                                ),
+            query_engine=wikisearch_engine(index),
+            metadata=ToolMetadata(
+                name="Wikipedia",
+                description="Useful for performing searches on Wikipedia pages.",
+            ),
         )
     ]
 
     openai.api_key = os.getenv("OPENAI_API_KEY")
     llm = OpenAI(model=MODEL)
     agent = ReActAgent(
-        tools=query_engine_tools, 
+        tools=query_engine_tools,
         memory=None,
-        llm=llm, 
-        callback_manager=CallbackManager([
-            # Add your callbacks here
-            cl.LlamaIndexCallbackHandler()
-        ]), 
-        verbose=True
+        llm=llm,
+        callback_manager=CallbackManager(
+            [
+                # Add your callbacks here
+                cl.LlamaIndexCallbackHandler()
+            ]
+        ),
+        verbose=True,
     )
 
     return agent
+
 
 @cl.on_settings_update
 async def setup_agent(settings):
@@ -90,6 +93,7 @@ async def setup_agent(settings):
         author="Agent", content=f"""Wikipage(s) "{query}" successfully indexed"""
     ).send()
 
+
 @cl.on_message
 async def main(message: cl.Message):
     print("on_message main function...")
@@ -100,4 +104,3 @@ async def main(message: cl.Message):
         print(f"Awaiting agent.chat({message.content})...")
         response = await cl.make_async(agent.chat)(message.content)
         await cl.Message(author="Agent", content=response).send()
-

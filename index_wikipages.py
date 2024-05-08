@@ -8,7 +8,7 @@ from llama_index.readers.wikipedia import WikipediaReader
 from llama_index.core import VectorStoreIndex, Settings
 from llama_index.core.node_parser import SentenceSplitter
 
-ENV_AVAILABLE= load_dotenv()  # loads the environment variables from .env file 
+ENV_AVAILABLE = load_dotenv()  # loads the environment variables from .env file
 assert ENV_AVAILABLE, "No .env file found"
 
 
