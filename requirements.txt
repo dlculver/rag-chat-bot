@@ -2,5 +2,6 @@ llama-index==0.10.34
 openai==1.26.0
 pydantic==2.7.1
 llama-index-readers-wikipedia==0.1.4
+llama-index-llms-openai >= 0.1.0
 wikipedia==1.4.0
 chainlit>=1.0.0

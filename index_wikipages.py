@@ -1,5 +1,5 @@
 import os
-from typing import List
+from typing import List, Optional
 from pydantic import BaseModel
 from dotenv import load_dotenv
 
@@ -18,7 +18,8 @@ class WikiPageList(BaseModel):
     pages: List[str]
 
 
-def wikipage_list(query):
+def wikipage_list(query) -> WikiPageList:
+    print("Extracting Wikipedia pages...")
     """This function extracts the Wikipedia pages from the query using OpenAI's GPT-3 API and returns them as a list (but stored in a WikiPageList object).
     Args:
         query (str): The query string containing the Wikipedia pages to extract. It must start with `please index:` followed by the Wikipedia pages.
@@ -45,6 +46,7 @@ def wikipage_list(query):
 
 
 def create_wikidocs(wikipage_requests: WikiPageList):
+    print("Creating Wikipedia documents...")
     """This function creates a list of Wikipedia documents from the list of Wikipedia pages.
     Args:
         wikipage_requests (WikiPageList): A data model object containing the list of Wikipedia pages.
@@ -59,6 +61,7 @@ def create_wikidocs(wikipage_requests: WikiPageList):
 
 
 def create_index(query):
+    print("Creating index...")
     global index  # why this?
     wikipage_requests = wikipage_list(query)
     docs = create_wikidocs(wikipage_requests)
